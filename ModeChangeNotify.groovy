@@ -23,7 +23,8 @@
  *  --------------------------------------------------------------------------
  *
  *  The latest version of this file can be found on GitHub at:
- *	
+ *  http://github.com/rayzurbock/SmartThings-ModeChangeNotify
+ * 
  *  Version 1.0.1 (2014-11-10)
  */
  
