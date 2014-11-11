@@ -21,3 +21,4 @@ A SmartThings SmartApp that will send a push notification anytime your home mode
 
 # Revision History
 *  11/10/2014 - 1.0.0 - Release.
+*  11/10/2014 - 1.0.1 - Corrected issue with disabling notifications. Added additional logging for future troubleshooting.
