@@ -24,7 +24,7 @@
  *
  *  The latest version of this file can be found on GitHub at:
  *	
- *  Version 1.0.0 (2014-11-10)
+ *  Version 1.0.1 (2014-11-10)
  */
  
 definition(
@@ -51,7 +51,7 @@ preferences {
 			defaultValue:	true
 		]
 		input inputEnableAlerts
-		paragraph "Mode Change Notify Version 1.0.0"
+		paragraph "Mode Change Notify Version 1.0.1"
 		paragraph "http://github.com/rayzurbock"
 		
 	}
@@ -69,13 +69,18 @@ def updated() {
 def initialize() {
   subscribe(location, onLocation)
   state.lastmode = location.mode
+  LOGMESSAGE("ModeChangeNotify: Initialized. Notifications: ${settings.enableAlerts}. Current Mode: ${state.lastmode}.")
 }
 
 def onLocation(evt) {
   def msg = "${location.name} mode changed from ${state.lastmode} to ${evt.value}"
-  LOGMESSAGE(msg)
-  sendPush(msg)
-  sendNotificationEvent(msg)
+  LOGMESSAGE("ModeChangeNotify: ${msg}")
+  if (settings.enableAlerts){
+	sendPush(msg)
+	sendNotificationEvent(msg)
+  } else {
+	LOGMESSAGE("ModeChangeNotify: Push notifications are disabled in SmartApp settings.")
+  }
   state.lastmode = location.mode
 }
 
