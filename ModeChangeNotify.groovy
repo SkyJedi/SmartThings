@@ -68,7 +68,3 @@ def onLocation(evt) {
             
   	state.lastmode = location.mode
 }
-
-private def LOGMESSAGE(message){
-	log.debug message
-}
