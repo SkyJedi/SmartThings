@@ -1,61 +1,42 @@
 /**
- *  Mode change notifier
+ *  Copyright 2015 SmartThings
  *
- *  Sends a notification anytime a mode change occurs.
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License. You may obtain a copy of the License at:
  *
- *  --------------------------------------------------------------------------
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Copyright (c) 2014 Rayzurbock.com
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+ *  for the specific language governing permissions and limitations under the License.
  *
- *  This program is free software: you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation, either version 3 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- *  for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *  --------------------------------------------------------------------------
- *
- *  The latest version of this file can be found on GitHub at:
- *  http://github.com/rayzurbock/SmartThings-ModeChangeNotify
- * 
- *  Version 1.0.1 (2014-11-10)
  */
  
 definition(
     name: "Mode Change Notify",
-    namespace: "rayzurbock",
-    author: "brian@rayzurbock.com",
+    namespace: "SkyJedi",
+    author: "skyjedi@gmail.com",
     description: "Sends a notification when a mode change occurs",
     category: "My Apps",
-    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
-    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
+    iconUrl: "http://cdn.device-icons.smartthings.com/alarm/beep/beep@2x.png",
+    iconX2Url: "http://cdn.device-icons.smartthings.com/alarm/beep/beep@2x.png"
 ) 
 
 preferences {
-	section("Setup") {
-		def pageProperties = [
+    section( "Notifications" ) 
+    {
+        def pageProperties = [
 			name:	"pageSetup",
 			title:	"Configuration",
 			install:	true
 		]
-		def inputEnableAlerts = [
-			name:	"enableAlerts",
-			type:	"bool",
-			title:  "Enable mode change alerts?",
-			defaultValue:	true
-		]
-		input inputEnableAlerts
-		paragraph "Mode Change Notify Version 1.0.1"
-		paragraph "http://github.com/rayzurbock"
-		
+        
+        input("recipients", "contact", title: "Send notifications to") {
+            input "sendPushMessage", "bool", title: "Send a push notification?", required: false
+            input "phoneNumber", "phone", title: "Send a Text Message?", required: false
+            }
 	}
+
 }
 
 def installed() {
@@ -70,19 +51,22 @@ def updated() {
 def initialize() {
   subscribe(location, onLocation)
   state.lastmode = location.mode
-  LOGMESSAGE("ModeChangeNotify: Initialized. Notifications: ${settings.enableAlerts}. Current Mode: ${state.lastmode}.")
 }
 
 def onLocation(evt) {
-  def msg = "${location.name} mode changed from ${state.lastmode} to ${evt.value}"
-  LOGMESSAGE("ModeChangeNotify: ${msg}")
-  if (settings.enableAlerts){
-	sendPush(msg)
-	sendNotificationEvent(msg)
-  } else {
-	LOGMESSAGE("ModeChangeNotify: Push notifications are disabled in SmartApp settings.")
-  }
-  state.lastmode = location.mode
+	def msg = "${location.name} mode changed from ${state.lastmode} to ${evt.value}"
+    
+		if (sendPushMessage) {
+         	log.debug("sending push message")
+         	sendPush("${msg}")
+        	}
+            
+		if (phoneNumber) {
+            log.debug("sending text message")
+            sendSms(phoneNumber,"${msg}")
+        	}
+            
+  	state.lastmode = location.mode
 }
 
 private def LOGMESSAGE(message){
