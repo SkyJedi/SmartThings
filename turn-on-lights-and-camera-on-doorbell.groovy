@@ -23,7 +23,7 @@ def clientVersion() {
 definition(
     name: "Turn on Lights and Camera on DoorBell",
     namespace: "SkyJedi",
-    author: "SkyJedi",
+    author: "skyjedi@gmail.com",
     description: "Turn on Lights and Camera on DoorBell",
     category: "Safety & Security",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/SafetyAndSecurity/App-IsItSafe.png",
@@ -31,17 +31,26 @@ definition(
 )
 
 preferences {
-    page(name: "mainPage")
-}
-def mainPage() {
-    dynamicPage(name: "mainPage", title: "Turn on Lights and Camera on DoorBell v${clientVersion()}", install: true, uninstall: true) {
         section("Doorbell Pushed") {
             input "mySwitch", "capability.switch", title: "Doorbell Pushed", required: false, multiple: true
 		}
         section("Cameras and Lights settings and actions") {
             input "cameras", "capability.imageCapture", title: "Which Cameras(s) to take pictures", multiple: true, required: false
-            input "lightson", "capability.switch", title: "Turn on these lights", multiple: true, required: false
-        }
+            input "colorson", "capability.colorControl", title: "Turn on these lights", multiple: true, required: false
+            input "switcheson", "capability.switch", title: "Turn on these switches", multiple: true, required: false
+            
+		}
+		section("Choose light effects...")
+			{
+				input "color", "enum", title: "Bulb Color?", required: false, multiple:false, options: [
+                    "Soft White",
+					"White",
+					"Daylight",
+					"Warm White",
+					"Red","Green","Blue","Yellow","Orange","Purple","Pink"]
+				input "lightLevel", "enum", title: "Light Level?", required: true, options: ["10","20","30","40","50","60","70","80","90","100"]
+			}
+
         section("Turn devices off after X minutes") {
         	input "timeOff", "number", title: "Minutes?", defaultValue: "5"
             }
@@ -55,7 +64,6 @@ def mainPage() {
         section("Change Name of App (optional)") {
             label title: "Assign a name", required: false
         }
-    }
 }
 
 def installed() {
@@ -81,16 +89,63 @@ def doorBell(evt) {
 		startSequence(evt)
 		}
 }
-private startSequence(evt)
-{
+def startSequence(evt) {
         sendText(sms, textMessage ? "$evt.displayName: $textMessage" : "Word")
         
-        if (lightson) {
-        	log.debug "Turning on lights $lightson"
-        	lightson?.on()
-            lightson?.setLevel(100) // If it is a dimmer set it to 100%
-            lightson?.setHue(38.81278538812785) //Set Color to Green
-            lightson?.setSaturation(85.88235294117648)
+        if (switcheson) {
+        	log.debug "Turning on switches $switcheson"
+            switcheson?.on()
+            
+        if (colorson) {
+        	log.debug "Turning on bulbs $colorson" 
+            
+            def hueColor = 70
+			def saturation = 100
+			
+            log.debug "Setting bulb color"
+            
+			switch(color) {
+				case "White":
+					hueColor = 52
+					saturation = 19
+					break;
+				case "Daylight":
+					hueColor = 53
+					saturation = 91
+					break;
+				case "Soft White":
+					hueColor = 23
+					saturation = 56
+					break;
+				case "Warm White":
+					hueColor = 20
+					saturation = 80 //83
+					break;
+	 	 		case "Blue":
+					hueColor = 70
+					break;
+				case "Green":
+					hueColor = 39
+					break;
+				case "Yellow":
+					hueColor = 25
+					break;
+				case "Orange":
+					hueColor = 10
+					break;
+				case "Purple":
+					hueColor = 75
+					break;
+				case "Pink":
+					hueColor = 83
+					break;
+				case "Red":
+					hueColor = 100
+					break;
+				}
+            def newValue = [hue: hueColor, saturation: saturation, level: lightLevel as Integer ?: 100]
+        	lightson?.setColor(newValue)
+			log.debug "new value = $newValue"
         }
 
         if (cameras) {
@@ -99,16 +154,20 @@ private startSequence(evt)
         }
 		runIn(timeOff*60, turnOff)
 	}
-    
-def turnOff()
-{
-	if (lightson) {
-        	log.debug "Turning off lights $lightson"
-        	lightson?.off()
+}
+def turnOff() {
+	if (switcheson) {
+        	log.debug "Turning off switches $switcheson"
+        	switcheson?.off()
 			}
+    if (colorson) {
+        	log.debug "Turning off bulbs $colorson"
+        	colorson?.off()
+			}        
+   
 }
 
-private sendText(number, message) {
+def sendText(number, message) {
 	if (sms) {
     	def phones = sms.split("\\+")
         for (phone in phones) {
