@@ -11,8 +11,9 @@
  */ 
 
 def clientVersion() {
-    return "1.0.0"
+    return "1.1.0"
 }
+// Ver 1.1.0 added a camera check to leave camera on if it was on before doorbell event
 
 /**
  * Turn on Lights and Camera on DoorBell
@@ -35,8 +36,9 @@ preferences {
             input "mySwitch", "capability.switch", title: "Doorbell Pushed", required: false, multiple: true
 		}
         section("Cameras and Lights settings and actions") {
-            input "cameras", "capability.imageCapture", title: "Which Cameras(s) to take pictures", multiple: true, required: false
-            input "colorson", "capability.colorControl", title: "Turn on these lights", multiple: true, required: false
+            input "camera", "capability.imageCapture", title: "Which Camera to take pictures", multiple: false, required: false
+            input "cameraon", "capability.switch", title: "Turn on these Camera Motion Detectors", multiple: false, required: false
+			input "colorson", "capability.colorControl", title: "Turn on these lights", multiple: true, required: false
             input "switcheson", "capability.switch", title: "Turn on these switches", multiple: true, required: false
             
 		}
@@ -83,6 +85,12 @@ private subscribeToEvents()
 	   subscribe(mySwitch, "switch.on", doorBell)
 }
 
+def initialize() {
+    // initialize switchVal
+    state.switchVal = 0
+    state.cameraval = 0
+	}
+    
 def doorBell(evt) {
 	if (evt.value == "on") {
 		log.debug "Doorbell Pushed startSequence(evt)"
@@ -94,10 +102,25 @@ def startSequence(evt) {
         
         if (switcheson) {
         	log.debug "Turning on switches $switcheson"
+            switcheson?.poll()
+            state.switchVal = switcheson?.currentSwitch
+            log.debug "Current Light Status $switcheson $state.switchVal"
             switcheson?.on()
+		    }
+        if (cameraon) {
+        	log.debug "Turning on camera $cameraon"
+            cameraon?.poll()
+            state.cameraVal = cameraon?.currentSwitch
+            log.debug "Current Light Status $cameraon $state.cameraVal"
+            cameraon?.on()            
+        	}
             
         if (colorson) {
         	log.debug "Turning on bulbs $colorson" 
+            
+            //colorson?.poll()
+            //def colorVal = colorson?.currentSwitch
+            //log.debug "Current Color Status $colorson $colorVal"
             
             def hueColor = 70
 			def saturation = 100
@@ -148,24 +171,35 @@ def startSequence(evt) {
 			log.debug "new value = $newValue"
         }
 
-        if (cameras) {
-        	log.debug "Taking pictures with $cameras"
-        	cameras?.take()
-        }
+        if (camera) {
+        	log.debug "Taking pictures with $camera"
+        	camera?.take()
+        	}
 		runIn(timeOff*60, turnOff)
 	}
-}
+
 def turnOff() {
 	if (switcheson) {
         	log.debug "Turning off switches $switcheson"
-        	switcheson?.off()
-			}
+            switcheson?.off()
+		}
+            
     if (colorson) {
         	log.debug "Turning off bulbs $colorson"
         	colorson?.off()
-			}        
-   
+		}  
+            
+    if (cameraon) {
+    		if (state.cameraVal == "on") {
+            log.debug "Camera was previously on, leaving on"
+            }
+        	else {
+            log.debug "Turning off Camera $cameraon"
+            cameraon?.off()
+            }
+		}
 }
+
 
 def sendText(number, message) {
 	if (sms) {
@@ -174,4 +208,4 @@ def sendText(number, message) {
             sendSms(phone, message)
         	}
     	}
-}
+        }
