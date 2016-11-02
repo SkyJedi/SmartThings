@@ -1,5 +1,5 @@
 /**
- *  Run Routine on Presence
+ *  Mode Change on Presence
  *
  *  Author: skyjedi@gmail.com
  *  Date: 11/2/16
@@ -23,7 +23,7 @@ def configure() {
   
   section("When all of these people leave home") {
     input "people", "capability.presenceSensor", multiple: true
-  }
+  		}
 
 	def actions = location.helloHome?.getPhrases()*.label
      if (actions) {
@@ -37,8 +37,11 @@ def configure() {
 
   section("Away threshold (defaults to 10 min)") {
     input "awayThreshold", "decimal", title: "Number of minutes", required: false
-  }
-  }
+  		}
+  section("Change Name of App (optional)") {
+  label title: "Assign a name", required: false
+        }
+  	}
 }
 
 def installed() {
