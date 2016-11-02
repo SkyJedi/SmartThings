@@ -1,5 +1,5 @@
 /**
- *  Mode Change on Presence
+ *  Run Routine on Presence
  *
  *  Author: skyjedi@gmail.com
  *  Date: 11/2/16
