@@ -185,6 +185,14 @@ def initialize() {
     subscribe(virtB_14_pushed,"momentary.pushed",fakebutton14Event)
     subscribe(virtB_15_pushed,"momentary.pushed",fakebutton15Event)
     subscribe(virtB_16_pushed,"momentary.pushed",fakebutton16Event)
+    subscribe(virtB_1_held,"momentary.pushed",fakebutton1hEvent)
+    subscribe(virtB_2_held,"momentary.pushed",fakebutton2hEvent)
+    subscribe(virtB_3_held,"momentary.pushed",fakebutton3hEvent)
+    subscribe(virtB_4_held,"momentary.pushed",fakebutton4hEvent)
+    subscribe(virtB_5_held,"momentary.pushed",fakebutton5hEvent)
+    subscribe(virtB_6_held,"momentary.pushed",fakebutton6hEvent)
+	subscribe(virtB_7_held,"momentary.pushed",fakebutton7hEvent)
+    subscribe(virtB_8_held,"momentary.pushed",fakebutton8hEvent)
 }
 
 def configured() {
@@ -266,6 +274,38 @@ def fakebutton15Event(evt) {
 
 def fakebutton16Event(evt) {
     executeHandlers(16, "pushed")
+}
+
+def fakebutton1hEvent(evt) {
+    executeHandlers(1, "held")
+}
+
+def fakebutton2hEvent(evt) {
+    executeHandlers(2, "held")
+}
+
+def fakebutton3hEvent(evt) {
+    executeHandlers(3, "held")
+}
+
+def fakebutton4hEvent(evt) {
+    executeHandlers(4, "held")
+}
+
+def fakebutton5hEvent(evt) {
+    executeHandlers(5, "held")
+}
+
+def fakebutton6hEvent(evt) {
+    executeHandlers(6, "held")
+}
+
+def fakebutton7hEvent(evt) {
+    executeHandlers(7, "held")
+}
+
+def fakebutton8hEvent(evt) {
+    executeHandlers(8, "held")
 }
 
 def buttonEvent(evt){
