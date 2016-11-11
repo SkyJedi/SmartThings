@@ -21,10 +21,9 @@ definition(
     author: "SkyJedi",
     description: "Control devices with buttons using Remotec ZRC-90 Scene Master",
     category: "My Apps",
-    iconUrl: "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/smartapps/dcoffing/button-controller-plus.src/MultiTapIcon125x125cy.png",
-    iconX2Url: "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/smartapps/dcoffing/button-controller-plus.src/MultiTapIcon250x250cy.png",
-    iconX3Url: "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/smartapps/dcoffing/button-controller-plus.src/MultiTapIcon250x250cy.png"
-)
+    iconUrl: "https://s3.amazonaws.com/smartapp-icons/MiscHacking/remote.png",
+    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/MiscHacking/remote@2x.png",
+    )
 
 preferences {
 	page(name: "selectButton")
