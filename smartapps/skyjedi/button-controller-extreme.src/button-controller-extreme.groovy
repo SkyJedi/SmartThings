@@ -22,7 +22,7 @@ definition(
     description: "Control devices with buttons using Remotec ZRC-90 Scene Master",
     category: "My Apps",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/MiscHacking/remote.png",
-    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/MiscHacking/remote@2x.png",
+    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/MiscHacking/remote@2x.png"
     )
 
 preferences {
@@ -102,35 +102,43 @@ def configureButton8() {
 		install: true, uninstall: true, getButtonSections(8))
 }
 
-def getButtonSections() {
+def getButtonSections(buttonNumber) {
 	return {
  //       log.debug "buttonNumber($buttonNumber)"
  
 		section("Lights to Toggle") {
 			input "lights_${buttonNumber}_pushed", "capability.switch", title: "Pushed", multiple: true, required: false
 			input "lights_${buttonNumber+8}_pushed", "capability.switch", title: "Double-tapped", multiple: true, required: false
+            input "lights_${buttonNumber}_held", "capability.switch", title: "Held", multiple: true, required: false
 		}
 		section("Dimmers to Toggle") {
 			input "lightsDT_${buttonNumber}_pushed", "capability.switchLevel", title: "Pushed", multiple: true, required: false
 			input "lightsDTVal_${buttonNumber}_pushed", "number", title: "Dim Level", required: false, description: "0 to 99"
 			input "lightsDT_${buttonNumber+8}_pushed", "capability.switchLevel", title: "Double-tapped", multiple: true, required: false
 			input "lightsDTVal_${buttonNumber+8}_pushed", "number", title: "Dim Level", required: false, description: "0 to 99"
+            input "lightsDT_${buttonNumber}_held", "capability.switchLevel", title: "Held", multiple: true, required: false
+			input "lightsDTVal_${buttonNumber}_held", "number", title: "Dim Level", required: false, description: "0 to 99"
 		}
 		section("Locks") {
 			input "locks_${buttonNumber}_pushed", "capability.lock", title: "Pushed", multiple: true, required: false
 			input "locks_${buttonNumber+8}_pushed", "capability.lock", title: "Double-tapped", multiple: true, required: false
+            input "locks_${buttonNumber}_held", "capability.lock", title: "Held", multiple: true, required: false
 		}
         section("Lights to Turn On") {
 			input "lightOn_${buttonNumber}_pushed", "capability.switch", title: "Pushed", multiple: true, required: false
 			input "lightOn_${buttonNumber+8}_pushed", "capability.switch", title: "Double-tapped", multiple: true, required: false
+            input "lightOn_${buttonNumber}_held", "capability.switch", title: "held", multiple: true, required: false
+
 		}
 		section("Lights to Turn Off") {
 			input "lightOff_${buttonNumber}_pushed", "capability.switch", title: "Pushed", multiple: true, required: false
 			input "lightOff_${buttonNumber+8}_pushed", "capability.switch", title: "Double-tapped", multiple: true, required: false
+           	input "lightOff_${buttonNumber}_held", "capability.switch", title: "Held", multiple: true, required: false
 		}
 		section("Modes") {
 			input "mode_${buttonNumber}_pushed", "mode", title: "Pushed", required: false
 			input "mode_${buttonNumber+8}_pushed", "mode", title: "Double-tapped", required: false
+            input "mode_${buttonNumber}_held", "mode", title: "Held", required: false
 		}
 		def phrases = location.helloHome?.getPhrases()*.label
 		if (phrases) {
@@ -138,11 +146,14 @@ def getButtonSections() {
 				log.trace phrases
 				input "phrase_${buttonNumber}_pushed", "enum", title: "Pushed", required: false, options: phrases
 				input "phrase_${buttonNumber+8}_pushed", "enum", title: "Double-tapped", required: false, options: phrases
+				input "phrase_${buttonNumber}_held", "enum", title: "Held", required: false, options: phrases
 			}
 		}
 		section("Sirens") {
 			input "sirens_${buttonNumber}_pushed","capability.alarm" ,title: "Pushed", multiple: true, required: false
 			input "sirens_${buttonNumber+8}_pushed", "capability.alarm", title: "Double-tapped", multiple: true, required: false
+			input "sirens_${buttonNumber}_held","capability.alarm" ,title: "Held", multiple: true, required: false
+
 		}
 	}
 }
