@@ -1,5 +1,5 @@
 /** 
-	Button Controller EXTREME
+	Button Controller Remotec ZRC-90
   	Copyright 2016  Author: SmartThings, butchered by SkyJedi
        
    Control devices using the buttons of an Remotec ZRC-90 Scene Master
